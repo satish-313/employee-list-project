@@ -66,4 +66,28 @@ const loginValidation = (emailOrPhone, password) => {
   };
 };
 
-export { registrationValidation,loginValidation };
+const employeValidation = (name,age,salary,phoneNumber) => {
+  if (name.length < 5) {
+    errors.name = "user must be 5 digit long";
+  }
+
+  if (phoneNumber.length !== 10) {
+    errors.phoneNumber = "must fill the valid phone number";
+  }
+
+  if (salary < 0) {
+    errors.salary = "salary must be greater than zero";
+  }
+
+  if (age < 18) {
+    errors.age = "age must be greater than 18";
+  }
+
+  return {
+    errors,
+    valid: Object.keys(errors).length < 1,
+  };
+
+}
+
+export { registrationValidation,loginValidation,employeValidation };

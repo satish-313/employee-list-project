@@ -4,8 +4,10 @@ import employeeModel from "../model/CreateEmploye.js";
 import {
   registrationValidation,
   loginValidation,
+  employeValidation
 } from "../utils/userInputValidation.js";
 import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -13,6 +15,23 @@ router.get("/", async (req, res) => {
   const userList = await employeeModel.find();
   res.send(userList);
 });
+
+router.get("/me", async(req,res) =>{
+  const token = req.header('token');
+
+  if(!token) {
+    res.json({auth:false })
+  }
+
+  try {
+    const verification = jwt.verify(token, process.env.jwtSecret)
+    // console.log("verification",verification);
+    res.json({auth: true})
+  } catch (error) {
+    res.json({auth:false})
+  }
+  
+})
 
 const getKey = (obj, value) => {
   const key = Object.keys(obj).find((key) => obj[key] === value);
@@ -48,8 +67,9 @@ router.post("/registration", async (req, res) => {
 
   try {
     const saveUser = await newUser.save();
-    req.session.name = saveUser.name
-    res.send(saveUser);
+    // req.session.name = saveUser.name
+    const token = jwt.sign({user: saveUser.name}, process.env.jwtSecret, {expiresIn: "1h"});
+    res.json({auth: true, token})
   } catch (error) {
     console.log(error)
     if ((error.code = "11000")) {
@@ -87,9 +107,9 @@ router.post("/login", async (req, res) => {
       const err = { error: true, errors: errorsend };
       res.json(err);
     }
-    req.session.name = "satish"
-    console.log(req.session)
-    res.json(loginUser);
+    // req.session.name = "satish"
+    const token = jwt.sign({user: loginUser.name}, process.env.jwtSecret, {expiresIn: "1h"});
+    res.json({auth: true, token})
   } else {
     errorsend.EmailOrPhone = "email or phone not registrated";
     const err = { error: true, errors: errorsend };
@@ -99,6 +119,14 @@ router.post("/login", async (req, res) => {
 
 router.post("/add-employee", async (req, res) => {
   const { name, age, salary, phoneNumber } = req.body;
+  
+  const {errors,valid} = employeValidation(name,age,salary,phoneNumber);
+  
+  if (!valid) {
+    const err = { error: true, errors };
+    res.json(err);
+  }
+  
   const newEmployee = new employeeModel({
     name,
     age,

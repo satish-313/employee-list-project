@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import {useGctx} from '../context'
 
 const Login = () => {
   const [values, setValues] = useState({
     EmailOrPhone: "",
     password: "",
   });
+
+  const {setAuth} = useGctx();
 
   const [err, setErr] = useState({});
 
@@ -24,7 +27,12 @@ const Login = () => {
         body: JSON.stringify(values),
       });
       const data = await res.json();
-      console.log('data',data);
+      
+      if(data.auth){
+        setAuth(true)
+        localStorage.setItem('token',data.token)
+        window.location.href = '/'
+      }
 
       if (data.error) {
         // console.log(data);

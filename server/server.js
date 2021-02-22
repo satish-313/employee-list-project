@@ -21,19 +21,19 @@ const main = async () => {
   });
   console.log(`db connect on : ${conn.connection.host}`);
 
-  app.use(session({
-    name: 'super',    
-    store: new MongoStore({mongooseConnection: mongoose.connection}),
-    secret: process.env.sessionSecret,
-    cookie:{
-      path: '/audit',
-      maxAge: 1000*60*60*24,
-      httpOnly: true,
-      secure: false,
-    },
-    resave: false,
-    saveUninitialized: false
-  }))
+  // app.use(session({
+  //   name: 'super',    
+  //   store: new MongoStore({mongooseConnection: mongoose.connection}),
+  //   secret: process.env.sessionSecret,
+  //   cookie:{
+  //     path: '/audit',
+  //     maxAge: 1000*60*60*24,
+  //     httpOnly: true,
+  //     secure: false,
+  //   },
+  //   resave: false,
+  //   saveUninitialized: false
+  // }))
   
   app.get("/test", (req, res) => {
     const obj = {

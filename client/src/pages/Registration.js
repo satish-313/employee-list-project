@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button, Container, Form, Row, Col } from "react-bootstrap";
+import {useGctx} from '../context'
 
 // components
 // import useFrom from "../components/formhook";
 
-const Registration = () => {
+const Registration = (prop) => {
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -13,6 +14,8 @@ const Registration = () => {
     password: "",
     confirmPassword: "",
   });
+
+  const {setAuth} = useGctx();
 
   const [err, setErr] = useState({});
 
@@ -30,8 +33,13 @@ const Registration = () => {
       });
       const data = await res.json();
 
+      if(data.auth){
+        setAuth(true)
+        localStorage.setItem('token',data.token)
+        window.location.href = '/'
+      }
+
       if (data.error) {
-        console.log(data);
         setErr(data.errors);
       }
     } catch (error) {
