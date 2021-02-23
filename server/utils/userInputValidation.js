@@ -67,11 +67,11 @@ const loginValidation = (emailOrPhone, password) => {
 };
 
 const employeValidation = (name,age,salary,phoneNumber) => {
-  if (name.length < 5) {
+  if (name.trim().length < 5) {
     errors.name = "user must be 5 digit long";
   }
 
-  if (phoneNumber.length !== 10) {
+  if (phoneNumber.trim().length !== 10) {
     errors.phoneNumber = "must fill the valid phone number";
   }
 

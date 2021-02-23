@@ -26,11 +26,11 @@ const AddEmployee = () => {
       });
       const data = await res.json();
 
-      console.log("data", data);
-
       if (data.error) {
-        // console.log(data);
+        console.log(data);
         setErr(data.errors);
+      } else {
+        window.location.href = "/employee-list";
       }
     } catch (error) {
       setLoading(false);
